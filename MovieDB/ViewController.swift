@@ -65,7 +65,10 @@ class ViewController: UIViewController {
         }
     }
     func gotoDetail(movie:MovieOverview) {
-        self.navigationController?.pushViewController(DetailViewController(), animated: true)
+       let detailView = DetailViewController()
+        detailView.movieOverview = movie
+       
+        self.navigationController?.pushViewController(detailView, animated: true)
     }
     
 }

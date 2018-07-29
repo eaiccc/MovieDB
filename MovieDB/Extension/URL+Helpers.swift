@@ -30,4 +30,8 @@ extension URL {
     static func getListPhotoURL(_ path: String) -> URL {
         return URL(string: PhotoBaseAddress + ListPhotoPath + path)!
     }
+    static func getDetailPhotoURL(_ path: String) -> URL {
+        print (PhotoBaseAddress + DetailPhotoPath + path)
+        return URL(string: PhotoBaseAddress + DetailPhotoPath + path)!
+    }
 }

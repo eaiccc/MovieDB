@@ -99,7 +99,7 @@ class MovieTableViewCell: UITableViewCell {
         titleLabel.text = movie.title
         releaseDateLabel.text = movie.releaseDate
         popularityLabel.text = String(format: "%.1f",  movie.popularity)
-        print(String(format: "%.1f",  movie.popularity))
+        //print(String(format: "%.1f",  movie.popularity))
         overviewLabel.text = movie.overview
         let photoUrl = URL.getListPhotoURL(movie.posterPath!)
         posterImage.kf.setImage(with:photoUrl)

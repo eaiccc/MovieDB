@@ -40,7 +40,7 @@ enum ApiResult<Value> {
 // MARK: - Endpoints
 enum Endpoint {
     case discoverMovie
-    case movieDetail(movieId: String)
+    case movieDetail(movieId: Int)
     
     var method: Alamofire.HTTPMethod {
         switch self {
@@ -102,7 +102,7 @@ class MovieApi {
         }
     }
     
-    static func getMovieDetail(_ movieId: String, completion: @escaping (ApiResult<Movie>) -> Void) {
+    static func getMovieDetail(_ movieId: Int, completion: @escaping (ApiResult<Movie>) -> Void) {
         
         self.apiRequestWithEndPoint(.movieDetail(movieId: movieId), params: nil) { response in
             switch response.result {
