@@ -13,6 +13,16 @@ class ViewController: UIViewController {
 
     fileprivate var movieDiscover: DiscoverMovie?
     fileprivate var movies: Array<MovieOverview> = Array<MovieOverview>()
+    private var currentPage:Int = 1
+    private var maxPage:Int = Int(INT_MAX)
+    private var isLoading = false
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        //refreshControl.attributedTitle = NSAttributedString(string: "Fetching Movie Data ...", attributes: attributes)
+        return refreshControl
+    }()
+    
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = UIColor.white
@@ -21,6 +31,11 @@ class ViewController: UIViewController {
         tableView.register(MovieTableViewCell.self, forCellReuseIdentifier: MovieTableViewCell.description())
         tableView.dataSource = self
         tableView.delegate = self
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
         return tableView
     }()
     
@@ -28,7 +43,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(tableView)
         getDiscoverDefault()
-        
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -48,17 +63,45 @@ class ViewController: UIViewController {
         getDiscoverMovie(releaseDate: "2017-07-31", sortBy: "release_date.desc", page: 1)
     }
     
+    func getDiscoverLoadMore(){
+        getDiscoverMovie(releaseDate: "2017-07-31", sortBy: "release_date.desc", page: currentPage + 1)
+    }
+    
+    @objc func refreshData(_ sender: Any){
+        self.movies.removeAll()
+        maxPage = Int(INT_MAX)
+        currentPage = 1
+        getDiscoverDefault()
+    }
+    
     func getDiscoverMovie(releaseDate:String, sortBy:String, page:Int) {
         //hud.show()
+        if (isLoading) {
+            return
+        }
+        if (page > maxPage) {
+            return
+        }
+        isLoading = true
         MovieApi.getDiscoverMovie( releaseDate, sortBy:sortBy, page: page) { result in
             do {
                 self.movieDiscover = try result.unwrap()
-                if let movieResult = self.movieDiscover {
-                    self.movies.append(contentsOf:movieResult.movies)
-                }
-                self.tableView.reloadData()
-            } catch let error as NSError {
                 
+                if let movieResult = self.movieDiscover {
+                    if ( page > movieResult.page) {
+                        self.maxPage = movieResult.page
+                        return
+                    }
+                    
+                    self.movies.append(contentsOf:movieResult.movies)
+                    print("page \(page) add \(movieResult.movies.count) to all movies \(self.movies.count)")
+                    self.currentPage = movieResult.page
+                }
+                self.refreshControl.endRefreshing()
+                self.tableView.reloadData()
+                self.isLoading = false
+            } catch let error as NSError {
+                self.isLoading = false
                 debugPrint("getDiscoverMovie error: \(error.localizedDescription)")
             }
             //self.hud.hide()
@@ -71,6 +114,11 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(detailView, animated: true)
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height) {
+            getDiscoverLoadMore()
+        }
+    }
 }
 // MARK: - Table View Data Source
 extension ViewController: UITableViewDataSource {

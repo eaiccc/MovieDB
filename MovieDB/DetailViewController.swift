@@ -62,6 +62,15 @@ class DetailViewController: UIViewController {
         return label
     }()
     
+    fileprivate(set) lazy var bookButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.blue
+        button.setTitle("Book", for: UIControlState())
+        button.setTitleColor(UIColor.white, for: UIControlState())
+        return button
+    }()
+    
+    
     var movieOverview:MovieOverview?
     var movie:Movie?
     
@@ -76,6 +85,7 @@ class DetailViewController: UIViewController {
         view.addSubview(genresTitleLabel)
         view.addSubview(languageLabel)
         view.addSubview(durationLabel)
+        view.addSubview(bookButton)
         updateOverViewData()
         // Do any additional setup after loading the view.
     }
@@ -158,6 +168,19 @@ class DetailViewController: UIViewController {
             make.trailing.equalTo(view)
             make.height.equalTo(20)
         }
+        bookButton.snp.makeConstraints{ (make) in
+            make.top.equalTo(languageLabel.snp.bottom)
+            make.centerX.equalTo(view)
+            make.height.equalTo(28)
+            make.width.equalTo(100)
+        }
+        bookButton.addTarget(self, action: #selector(bookButtonClicked(_:)), for: .touchUpInside)
+    }
+    
+    @objc func bookButtonClicked(_ sender: UIButton) {
+        let bookVc = BookMovieViewController()
+        bookVc.movie = movie
+        self.navigationController?.pushViewController(bookVc, animated: true)
     }
     
     func getMovieDetail() {
