@@ -14,6 +14,8 @@ class MovieTableViewCell: UITableViewCell {
 // MARK: - Designated Initializer
     fileprivate let posterImage: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage.init(named: "imagenotavailable")
+        imageView.contentMode = UIViewContentMode.scaleAspectFit
         return imageView;
     }()
     
@@ -98,10 +100,17 @@ class MovieTableViewCell: UITableViewCell {
     func updateData(movie : MovieOverview) {
         titleLabel.text = movie.title
         releaseDateLabel.text = movie.releaseDate
-        popularityLabel.text = String(format: "%.1f",  movie.popularity)
+        popularityLabel.text = movie.popularityString
         //print(String(format: "%.1f",  movie.popularity))
         overviewLabel.text = movie.overview
-        let photoUrl = URL.getListPhotoURL(movie.posterPath!)
-        posterImage.kf.setImage(with:photoUrl)
+        
+        guard let path = (movie.posterPath != nil) ? movie.posterPath : movie.backdropPath  else {
+            return
+        }
+        
+        let photoUrl = URL.getListPhotoURL(path)
+        let image = UIImage.init(named: "imagenotavailable")
+        posterImage.kf.setImage(with: photoUrl, placeholder: image)
+        
     }
 }

@@ -18,5 +18,6 @@ extension SpokenLanguage {
         iso6391 = json["iso_639_1"].stringValue
         name = json["name"].stringValue
     }
+    
 }
 

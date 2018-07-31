@@ -45,4 +45,8 @@ extension MovieOverview {
         overview = json["overview"].stringValue
         releaseDate = json["release_date"].stringValue
     }
+    
+    var popularityString: String {
+        return String(format: "%.1f",  popularity)
+    }
 }

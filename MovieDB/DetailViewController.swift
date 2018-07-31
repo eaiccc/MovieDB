@@ -38,7 +38,7 @@ class DetailViewController: UIViewController {
     fileprivate(set) lazy var overviewLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
         label.textColor = UIColor.black
-        label.numberOfLines = 3
+        label.numberOfLines = 5
         label.lineBreakMode = .byTruncatingTail
         return label
     }()
@@ -102,14 +102,16 @@ class DetailViewController: UIViewController {
     
         titleLabel.text = overview.title
         releaseDateLabel.text = overview.releaseDate
-        popularityLabel.text = String(format: "%.1f",  overview.popularity)
+        popularityLabel.text = overview.popularityString
     
         overviewLabel.text = overview.overview
-        let photoUrl = URL.getDetailPhotoURL(overview.posterPath!)
-        posterImage.kf.setImage(with:photoUrl)
-    
+        let path = (overview.posterPath != nil) ? overview.posterPath : overview.backdropPath
+        let photoUrl = URL.getDetailPhotoURL(path!)
+        let image = UIImage.init(named: "imagenotavailable")
+        posterImage.kf.setImage(with: photoUrl, placeholder: image)
         
         posterImage.contentMode = UIViewContentMode.scaleAspectFit
+        
         getMovieDetail()
     }
     
@@ -204,13 +206,17 @@ class DetailViewController: UIViewController {
             return
         }
         
-        durationLabel.text = String(data.runtime)
+        durationLabel.text = data.runtimeString
         var genreslist = "Genres:"
         for genre in data.genres{
             genreslist = genreslist + " " + genre.name
         }
         genresTitleLabel.text = genreslist
-        languageLabel.text = data.originalLanguage
+        var languages = "lagnuages:"
+        for spokenlanguage in data.spokenLanguages{
+            languages = languages + " " + spokenlanguage.name
+        }
+        languageLabel.text = languages
         
     }
     /*

@@ -35,6 +35,7 @@ struct Movie {
     var spokenLanguages:[SpokenLanguage]
     
 }
+
 extension Movie {
     init(_ json: JSON) {
         movieId = json["id"].intValue
@@ -61,4 +62,23 @@ extension Movie {
         spokenLanguages = json["spoken_languages"].arrayValue.map { SpokenLanguage($0) }
         genres = json["genres"].arrayValue.map { Genres($0) }
     }
+    
+    var popularityString: String {
+        return String(format: "%.1f",  popularity)
+    }
+    
+    var runtimeString: String {
+        let hour:Int = runtime / 60
+        let min:Int = runtime % 60
+        if (hour > 0 ) {
+            return String(format: "%d h %d m",  hour, min)
+        }else {
+            return String(format: "%d m", min)
+        }
+    }
+    
+
+    
+    
+    
 }

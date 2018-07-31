@@ -16,12 +16,19 @@ class ViewController: UIViewController {
     private var currentPage:Int = 1
     private var maxPage:Int = Int(INT_MAX)
     private var isLoading = false
+    
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
-        //refreshControl.attributedTitle = NSAttributedString(string: "Fetching Movie Data ...", attributes: attributes)
         return refreshControl
     }()
+    
+    fileprivate lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:
+            .gray)
+        return activityIndicator
+    }()
+    
     
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -42,9 +49,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        
         getDiscoverDefault()
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func viewDidLayoutSubviews() {
@@ -52,6 +60,7 @@ class ViewController: UIViewController {
         tableView.snp.makeConstraints { (make) in
             make.edges.equalTo(view)
         }
+        activityIndicator.center = view.center
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -83,8 +92,10 @@ class ViewController: UIViewController {
             return
         }
         isLoading = true
+        activityIndicator.startAnimating()
         MovieApi.getDiscoverMovie( releaseDate, sortBy:sortBy, page: page) { result in
             do {
+                
                 self.movieDiscover = try result.unwrap()
                 
                 if let movieResult = self.movieDiscover {
@@ -100,8 +111,10 @@ class ViewController: UIViewController {
                 self.refreshControl.endRefreshing()
                 self.tableView.reloadData()
                 self.isLoading = false
+                self.activityIndicator.stopAnimating()
             } catch let error as NSError {
                 self.isLoading = false
+                self.activityIndicator.stopAnimating()
                 debugPrint("getDiscoverMovie error: \(error.localizedDescription)")
             }
             //self.hud.hide()
