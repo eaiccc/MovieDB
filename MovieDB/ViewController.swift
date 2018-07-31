@@ -69,11 +69,11 @@ class ViewController: UIViewController {
     
     
     func getDiscoverDefault(){
-        getDiscoverMovie(releaseDate: "2017-07-31", sortBy: "release_date.desc", page: 1)
+        getDiscoverMovie(releaseDate: DefaultDiscoverDay, sortBy: DefaultSortBy, page: 1)
     }
     
     func getDiscoverLoadMore(){
-        getDiscoverMovie(releaseDate: "2017-07-31", sortBy: "release_date.desc", page: currentPage + 1)
+        getDiscoverMovie(releaseDate: DefaultDiscoverDay, sortBy: DefaultSortBy, page: currentPage + 1)
     }
     
     @objc func refreshData(_ sender: Any){
@@ -84,7 +84,7 @@ class ViewController: UIViewController {
     }
     
     func getDiscoverMovie(releaseDate:String, sortBy:String, page:Int) {
-        //hud.show()
+        
         if (isLoading) {
             return
         }
@@ -95,9 +95,7 @@ class ViewController: UIViewController {
         activityIndicator.startAnimating()
         MovieApi.getDiscoverMovie( releaseDate, sortBy:sortBy, page: page) { result in
             do {
-                
                 self.movieDiscover = try result.unwrap()
-                
                 if let movieResult = self.movieDiscover {
                     if ( page > movieResult.page) {
                         self.maxPage = movieResult.page
@@ -105,7 +103,6 @@ class ViewController: UIViewController {
                     }
                     
                     self.movies.append(contentsOf:movieResult.movies)
-                    print("page \(page) add \(movieResult.movies.count) to all movies \(self.movies.count)")
                     self.currentPage = movieResult.page
                 }
                 self.refreshControl.endRefreshing()
@@ -117,7 +114,7 @@ class ViewController: UIViewController {
                 self.activityIndicator.stopAnimating()
                 debugPrint("getDiscoverMovie error: \(error.localizedDescription)")
             }
-            //self.hud.hide()
+            
         }
     }
     func gotoDetail(movie:MovieOverview) {

@@ -12,5 +12,6 @@ public let PhotoBaseAddress: String = "https://image.tmdb.org/"
 public let ListPhotoPath: String = "t/p/w92"
 public let DetailPhotoPath: String = "t/p/w342"
 public let APIKey: String = "328c283cd27bd1877d9080ccb1604c91"
-
+public let DefaultDiscoverDay : String = "2017-07-31"
+public let DefaultSortBy : String = "release_date.desc"
 

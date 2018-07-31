@@ -101,7 +101,6 @@ class MovieTableViewCell: UITableViewCell {
         titleLabel.text = movie.title
         releaseDateLabel.text = movie.releaseDate
         popularityLabel.text = movie.popularityString
-        //print(String(format: "%.1f",  movie.popularity))
         overviewLabel.text = movie.overview
         
         guard let path = (movie.posterPath != nil) ? movie.posterPath : movie.backdropPath  else {
