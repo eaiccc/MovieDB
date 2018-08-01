@@ -93,25 +93,25 @@ class ViewController: UIViewController {
         }
         isLoading = true
         activityIndicator.startAnimating()
-        MovieApi.getDiscoverMovie( releaseDate, sortBy:sortBy, page: page) { result in
+        MovieApi.getDiscoverMovie( releaseDate, sortBy:sortBy, page: page) { [weak self] result in
             do {
-                self.movieDiscover = try result.unwrap()
-                if let movieResult = self.movieDiscover {
+                self?.movieDiscover = try result.unwrap()
+                if let movieResult = self?.movieDiscover {
                     if ( page > movieResult.page) {
-                        self.maxPage = movieResult.page
+                        self?.maxPage = movieResult.page
                         return
                     }
                     
-                    self.movies.append(contentsOf:movieResult.movies)
-                    self.currentPage = movieResult.page
+                    self?.movies.append(contentsOf:movieResult.movies)
+                    self?.currentPage = movieResult.page
                 }
-                self.refreshControl.endRefreshing()
-                self.tableView.reloadData()
-                self.isLoading = false
-                self.activityIndicator.stopAnimating()
+                self?.refreshControl.endRefreshing()
+                self?.tableView.reloadData()
+                self?.isLoading = false
+                self?.activityIndicator.stopAnimating()
             } catch let error as NSError {
-                self.isLoading = false
-                self.activityIndicator.stopAnimating()
+                self?.isLoading = false
+                self?.activityIndicator.stopAnimating()
                 debugPrint("getDiscoverMovie error: \(error.localizedDescription)")
             }
             

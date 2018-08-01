@@ -186,19 +186,17 @@ class DetailViewController: UIViewController {
     }
     
     func getMovieDetail() {
-        //hud.show()
         guard let overview = movieOverview else {
             return
         }
-        MovieApi.getMovieDetail( overview.movieId) { result in
+        MovieApi.getMovieDetail( overview.movieId) { [weak self] result in
             do {
-                self.movie = try result.unwrap()
-                self.updateData()
+                self?.movie = try result.unwrap()
+                self?.updateData()
             } catch let error as NSError {
                 
                 debugPrint("getDiscoverMovie error: \(error.localizedDescription)")
             }
-            //self.hud.hide()
         }
     }
     func updateData() {

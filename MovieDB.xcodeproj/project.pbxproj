@@ -153,6 +153,16 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		0480C8C221116A18003C8D4A /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				04919BD6210A473500523525 /* ViewController.swift */,
+				041FD08D210CFF0600AD4DD0 /* DetailViewController.swift */,
+				0480C8BC210F8F75003C8D4A /* BookMovieViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
 		04919BC8210A473500523525 = {
 			isa = PBXGroup;
 			children = (
@@ -184,9 +194,7 @@
 				041FD074210B102D00AD4DD0 /* Extension */,
 				041FD071210AF1E400AD4DD0 /* DataManagement */,
 				04919BD4210A473500523525 /* AppDelegate.swift */,
-				04919BD6210A473500523525 /* ViewController.swift */,
-				041FD08D210CFF0600AD4DD0 /* DetailViewController.swift */,
-				0480C8BC210F8F75003C8D4A /* BookMovieViewController.swift */,
+				0480C8C221116A18003C8D4A /* ViewController */,
 				04919BD8210A473500523525 /* Main.storyboard */,
 				04919BDB210A473700523525 /* Assets.xcassets */,
 				04919BDD210A473700523525 /* LaunchScreen.storyboard */,
