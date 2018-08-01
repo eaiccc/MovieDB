@@ -12,6 +12,4 @@ end
 target 'MovieDBTests' do
   pod 'SwiftyJSON'
   pod 'Alamofire'
-  pod 'Kingfisher'
-  pod 'SnapKit'
 end
