@@ -69,11 +69,19 @@ class ViewController: UIViewController {
     
     
     func getDiscoverDefault(){
-        getDiscoverMovie(releaseDate: DefaultDiscoverDay, sortBy: DefaultSortBy, page: 1)
+        
+        getDiscoverMovie(releaseDate: getCurrentDate(), sortBy: DefaultSortBy, page: 1)
     }
     
+    func getCurrentDate() -> String {
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let currentDate = formatter.string(from: date)
+        return currentDate
+    }
     func getDiscoverLoadMore(){
-        getDiscoverMovie(releaseDate: DefaultDiscoverDay, sortBy: DefaultSortBy, page: currentPage + 1)
+        getDiscoverMovie(releaseDate: getCurrentDate(), sortBy: DefaultSortBy, page: currentPage + 1)
     }
     
     @objc func refreshData(_ sender: Any){

@@ -37,6 +37,7 @@ class MovieTableViewCell: UITableViewCell {
         label.textColor = UIColor.white
         label.backgroundColor = UIColor.blue
         label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 10)
         return label
     }()
     fileprivate(set) lazy var overviewLabel: UILabel = {
