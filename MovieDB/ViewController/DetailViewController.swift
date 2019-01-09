@@ -8,22 +8,37 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - Designated Initializer
     fileprivate let posterImage: UIImageView = {
         let imageView = UIImageView()
         return imageView;
     }()
     
+    fileprivate let scrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.isScrollEnabled = true
+        return scroll;
+    }()
+    
+    fileprivate let contentView: UIView = {
+        let view = UIView()
+        return view;
+    }()
+    fileprivate let dataView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        return view;
+    }()
     fileprivate(set) lazy var titleLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         return label
     }()
     
     fileprivate(set) lazy var releaseDateLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 10)
         return label
     }()
@@ -37,7 +52,7 @@ class DetailViewController: UIViewController {
     }()
     fileprivate(set) lazy var overviewLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.numberOfLines = 5
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -45,20 +60,20 @@ class DetailViewController: UIViewController {
     
     fileprivate(set) lazy var genresTitleLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.text = "Genres"
         return label
     }()
     
     fileprivate(set) lazy var languageLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         return label
     }()
     
     fileprivate(set) lazy var durationLabel: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         return label
     }()
     
@@ -70,30 +85,41 @@ class DetailViewController: UIViewController {
         return button
     }()
     
-    
+    var isAddBlur:Bool = false
     var movieOverview:MovieOverview?
     var movie:Movie?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isAddBlur = false
         view.backgroundColor = UIColor.white
         view.addSubview(posterImage)
-        view.addSubview(titleLabel)
-        view.addSubview(releaseDateLabel)
-        view.addSubview(popularityLabel)
-        view.addSubview(overviewLabel)
-        view.addSubview(genresTitleLabel)
-        view.addSubview(languageLabel)
-        view.addSubview(durationLabel)
-        view.addSubview(bookButton)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(dataView)
+        dataView.addSubview(titleLabel)
+        dataView.addSubview(releaseDateLabel)
+        dataView.addSubview(popularityLabel)
+        dataView.addSubview(overviewLabel)
+        dataView.addSubview(genresTitleLabel)
+        dataView.addSubview(languageLabel)
+        dataView.addSubview(durationLabel)
+        dataView.addSubview(bookButton)
+        scrollView.delegate = self
         updateOverViewData()
-        // Do any additional setup after loading the view.
+        addConstraints()
+//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        self.navigationController?.navigationBar.shadowImage = UIImage()
+//        self.navigationController?.navigationBar.isTranslucent = true
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
     
     func updateOverViewData() {
         guard let overview = movieOverview else {
@@ -103,32 +129,41 @@ class DetailViewController: UIViewController {
         titleLabel.text = overview.title
         releaseDateLabel.text = overview.releaseDate
         popularityLabel.text = overview.popularityString
-    
         overviewLabel.text = overview.overview
         let path = (overview.posterPath != nil) ? overview.posterPath : overview.backdropPath
         let photoUrl = URL.getDetailPhotoURL(path!)
         let image = UIImage.init(named: "imagenotavailable")
         posterImage.kf.setImage(with: photoUrl, placeholder: image)
-        
-        posterImage.contentMode = UIViewContentMode.scaleAspectFit
+        posterImage.contentMode = UIViewContentMode.scaleAspectFill
         
         getMovieDetail()
+        
     }
     
-    override func viewDidLayoutSubviews() {
-      
-        super.viewDidLayoutSubviews()
-    
+    func addConstraints(){
         posterImage.snp.makeConstraints { (make) in
-            make.top.equalTo(view).offset(50)
-            make.leading.equalTo(view).offset(10)
-            make.trailing.equalTo(view).offset(10)
-            make.height.equalTo(300)
+            make.edges.equalTo(view)
+        }
+        scrollView.snp.makeConstraints { (make) in
+            make.top.equalTo(view)
+            make.leading.equalTo(view)
+            make.trailing.equalTo(view)
+            make.bottom.equalTo(view)
+        }
+        contentView.snp.makeConstraints { (make) in
+            make.edges.equalTo(scrollView)
+            make.width.equalTo(view)
+            make.bottom.equalTo(dataView.snp.bottom)
+        }
+        dataView.snp.makeConstraints { (make) in
+            make.top.equalTo(contentView.snp.top).offset(700)
+            make.width.equalTo(view)
+            make.bottom.equalTo(bookButton.snp.bottom).offset(10)
         }
         
         popularityLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(posterImage.snp.bottom).offset(10)
-            make.leading.equalTo(view).offset(10)
+            make.top.equalTo(dataView.snp.top).offset(10)
+            make.leading.equalTo(contentView).offset(10)
             make.height.equalTo(30)
             make.width.equalTo(30)
         }
@@ -136,47 +171,57 @@ class DetailViewController: UIViewController {
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(popularityLabel)
             make.leading.equalTo(popularityLabel.snp.trailing).offset(5)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(30)
         }
         
         releaseDateLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(popularityLabel.snp.bottom).offset(5)
             make.leading.equalTo(popularityLabel)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(12)
         }
         overviewLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(releaseDateLabel.snp.bottom)
             make.leading.equalTo(popularityLabel)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(100)
         }
         genresTitleLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(overviewLabel.snp.bottom)
             make.leading.equalTo(popularityLabel)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(20)
         }
         durationLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(genresTitleLabel.snp.bottom)
             make.leading.equalTo(popularityLabel)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(20)
         }
         languageLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(durationLabel.snp.bottom)
             make.leading.equalTo(popularityLabel)
-            make.trailing.equalTo(view)
+            make.trailing.equalTo(contentView)
             make.height.equalTo(20)
         }
         bookButton.snp.makeConstraints{ (make) in
-            make.top.equalTo(languageLabel.snp.bottom)
-            make.centerX.equalTo(view)
+            make.top.equalTo(languageLabel.snp.bottom).offset(20)
+            make.centerX.equalTo(contentView)
             make.height.equalTo(28)
             make.width.equalTo(100)
         }
+    }
+    
+    override func updateViewConstraints() {
+        super.updateViewConstraints()
+        
+    }
+    override func viewDidLayoutSubviews() {
+      
+        super.viewDidLayoutSubviews()
         bookButton.addTarget(self, action: #selector(bookButtonClicked(_:)), for: .touchUpInside)
+
     }
     
     @objc func bookButtonClicked(_ sender: UIButton) {
@@ -199,6 +244,7 @@ class DetailViewController: UIViewController {
             }
         }
     }
+    
     func updateData() {
         guard let data = movie else {
             return
@@ -217,6 +263,18 @@ class DetailViewController: UIViewController {
         languageLabel.text = languages
         
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView){
+//        if (scrollView.contentOffset.y > 10) {
+//            if (!isAddBlur) {
+//                posterImage.addBlurEffect()
+//                isAddBlur = true
+//            }
+//        }else if(isAddBlur){
+//            posterImage.removeBlurEffect()
+//            isAddBlur = false
+//        }
+    }
     /*
     // MARK: - Navigation
 
@@ -226,5 +284,5 @@ class DetailViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+   
 }
